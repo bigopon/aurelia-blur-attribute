@@ -4,7 +4,8 @@ const defaultConfig = {
   mouse: true,
   touch: false,
   pointer: false,
-  focus: true
+  focus: true,
+  windowBlur: true
 };
 
 export function configure(frameworkConfig, blurConfig) {

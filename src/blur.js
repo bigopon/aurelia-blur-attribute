@@ -28,19 +28,19 @@ export class Blur {
     touch(on) {
       useTouch = !!on;
       const fn = on ? addListener : removeListener;
-      fn(document.body, 'touchstart', handleTouchStart, true);
+      fn(document, 'touchstart', handleTouchStart, true);
       return Blur.listen;
     },
     mouse(on) {
       useMouse = !!on;
       const fn = on ? addListener : removeListener;
-      fn(document.body, 'mousedown', handleMousedown, true);
+      fn(document, 'mousedown', handleMousedown, true);
       return Blur.listen;
     },
     pointer(on) {
       usePointer = !!on;
       const fn = on ? addListener : removeListener;
-      fn(document.body, 'pointerdown', handlePointerDown, true);
+      fn(document, 'pointerdown', handlePointerDown, true);
       return Blur.listen;
     },
     focus(on) {
