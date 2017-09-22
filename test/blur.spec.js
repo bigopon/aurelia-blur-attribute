@@ -35,6 +35,8 @@ describe('blur', () => {
     focusableDiv.tabIndex = -1;
     container.append(input1, input2, button, focusableDiv);
 
+    outsideDiv.tabIndex = -1;
+
     blur = new Blur(container);
 
     input1.focus();
@@ -48,11 +50,14 @@ describe('blur', () => {
     expect(blur.value).toBe(true);
   });
 
-  it('should not change value to false when interacting different elements inside bound container', () => {
+  it('should not change value to false when interacting different elements inside bound container', done => {
     blur.value = true;
 
-    button.click();
+    outsideDiv.focus();
 
-    expect(blur.value).toBe(true);
+    setTimeout(function() {
+      expect(blur.value).toBe(false);
+      done();
+    }, 80);
   });
 });

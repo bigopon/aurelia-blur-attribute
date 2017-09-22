@@ -12,3 +12,5 @@ export function configure(frameworkConfig, blurConfig) {
   frameworkConfig.globalResources(PLATFORM.moduleName('./blur'));
   Blur.use(Object.assign({}, defaultConfig, blurConfig));
 }
+
+export {Blur};
