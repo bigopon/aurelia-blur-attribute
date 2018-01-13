@@ -1,350 +1,296 @@
-'use strict';
-
-System.register(['aurelia-pal', 'aurelia-templating', 'aurelia-binding'], function (_export, _context) {
-  "use strict";
-
-  var PLATFORM, DOM, customAttribute, bindable, bindingMode, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _class3, _temp, global, document, useTouch, useMouse, usePointer, useFocus, Blur, checkTargets, alreadyChecked, cleanCheckTimeout;
-
-  function _initDefineProp(target, property, descriptor, context) {
-    if (!descriptor) return;
-    Object.defineProperty(target, property, {
-      enumerable: descriptor.enumerable,
-      configurable: descriptor.configurable,
-      writable: descriptor.writable,
-      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-    });
-  }
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
+System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], function (exports_1, context_1) {
+    "use strict";
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __moduleName = context_1 && context_1.id;
+    function addListener(el, ev, listener, capture) {
+        el.addEventListener(ev, listener, capture);
     }
-  }
-
-  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-    var desc = {};
-    Object['ke' + 'ys'](descriptor).forEach(function (key) {
-      desc[key] = descriptor[key];
-    });
-    desc.enumerable = !!desc.enumerable;
-    desc.configurable = !!desc.configurable;
-
-    if ('value' in desc || desc.initializer) {
-      desc.writable = true;
+    function removeListener(el, ev, listener, capture) {
+        el.removeEventListener(ev, listener, capture);
     }
-
-    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-      return decorator(target, property, desc) || desc;
-    }, desc);
-
-    if (context && desc.initializer !== void 0) {
-      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-      desc.initializer = undefined;
+    function unregister(attr) {
+        var idx = checkTargets.indexOf(attr);
+        if (idx !== -1)
+            checkTargets.splice(idx, 1);
     }
-
-    if (desc.initializer === void 0) {
-      Object['define' + 'Property'](target, property, desc);
-      desc = null;
+    function revertAlreadyChecked() {
+        alreadyChecked = false;
+        cleanCheckTimeout = 0;
     }
-
-    return desc;
-  }
-
-  function _initializerWarningHelper(descriptor, context) {
-    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-  }
-
-  function query(selector, context) {
-    context = context || document.body;
-
-    if (/^(#?[\w-]+|\.[\w-.]+)$/.test(selector)) {
-      switch (selector.charAt(0)) {
-        case '#':
-          return [context.getElementById(selector.substr(1))];
-        case '.':
-          var classes = selector.substr(1).replace(/\./g, ' ');
-          return [].slice.call(context.getElementsByClassName(classes));
-        default:
-          return [].slice.call(context.getElementsByTagName(selector));
-      }
-    }
-
-    return [].slice.call(context.querySelectorAll(selector));
-  }
-
-  function addListener(el, ev, listener, capture) {
-    el.addEventListener(ev, listener, capture);
-  }
-  function removeListener(el, ev, listener, capture) {
-    el.removeEventListener(ev, listener, capture);
-  }
-
-  function unregister(attr) {
-    var idx = checkTargets.indexOf(attr);
-    if (idx !== -1) checkTargets.splice(idx, 1);
-  }
-
-  function revertAlreadyChecked() {
-    alreadyChecked = false;
-    cleanCheckTimeout = 0;
-  }
-
-  function handlePointerDown(e) {
-    for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
-      var attr = checkTargets[i];
-      if (!attr.contains(e.target)) {
-        attr.triggerBlur();
-      }
-    }
-    alreadyChecked = true;
-    cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
-  }
-
-  function handleTouchStart(e) {
-    if (alreadyChecked) {
-      if (!useMouse) {
-        clearTimeout(cleanCheckTimeout);
-        revertAlreadyChecked();
-      }
-      return;
-    }
-    var target = getTargetFromEvent(e);
-    for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
-      var attr = checkTargets[i];
-      if (!attr.contains(target)) {
-        attr.triggerBlur();
-      }
-    }
-    alreadyChecked = true;
-    cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
-  }
-
-  function handleMousedown(e) {
-    if (alreadyChecked) {
-      clearTimeout(cleanCheckTimeout);
-      revertAlreadyChecked();
-      return;
-    }
-    var target = getTargetFromEvent(e);
-    for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
-      var attr = checkTargets[i];
-      if (!attr.contains(target)) {
-        attr.triggerBlur();
-      }
-    }
-    alreadyChecked = true;
-    cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
-  }
-
-  function handleWindowFocus(e) {
-    if (alreadyChecked) {
-      clearTimeout(cleanCheckTimeout);
-      revertAlreadyChecked();
-      return;
-    }
-    var target = getTargetFromEvent(e);
-    var shouldBlur = target === window;
-    for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
-      var attr = checkTargets[i];
-      if (shouldBlur || !attr.contains(target)) {
-        attr.triggerBlur();
-      }
-    }
-  }
-
-  function handleWindowBlur() {
-    for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
-      checkTargets[i].triggerBlur();
-    }
-  }
-
-  function getTargetFromEvent(e) {
-    return e.target;
-  }
-  return {
-    setters: [function (_aureliaPal) {
-      PLATFORM = _aureliaPal.PLATFORM;
-      DOM = _aureliaPal.DOM;
-    }, function (_aureliaTemplating) {
-      customAttribute = _aureliaTemplating.customAttribute;
-      bindable = _aureliaTemplating.bindable;
-    }, function (_aureliaBinding) {
-      bindingMode = _aureliaBinding.bindingMode;
-    }],
-    execute: function () {
-      global = PLATFORM.global;
-      document = global.document;
-      useTouch = false;
-      useMouse = false;
-      usePointer = false;
-      useFocus = false;
-
-      _export('Blur', Blur = (_dec = customAttribute('blur', bindingMode.twoWay), _dec2 = bindable({
-        primaryProperty: true,
-        defaultBindingMode: bindingMode.twoWay
-      }), _dec(_class = (_class2 = (_temp = _class3 = function () {
-        Blur.use = function use(cfg) {
-          for (var i in cfg) {
-            if (i in this.listen) {
-              this.listen[i](cfg[i]);
+    function handlePointerDown(e) {
+        var target = getTargetFromEvent(e);
+        for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
+            var attr = checkTargets[i];
+            if (global === target || !attr.contains(target)) {
+                attr.triggerBlur();
             }
-          }
-        };
-
-        function Blur(element) {
-          _classCallCheck(this, Blur);
-
-          _initDefineProp(this, 'value', _descriptor, this);
-
-          _initDefineProp(this, 'onBlur', _descriptor2, this);
-
-          _initDefineProp(this, 'linkedWith', _descriptor3, this);
-
-          _initDefineProp(this, 'linkedMultiple', _descriptor4, this);
-
-          _initDefineProp(this, 'searchSubTree', _descriptor5, this);
-
-          _initDefineProp(this, 'linkingContext', _descriptor6, this);
-
-          this.element = element;
         }
-
-        Blur.prototype.bind = function bind(bindingContext) {
-          this.context = bindingContext;
-        };
-
-        Blur.prototype.attached = function attached() {
-          checkTargets.push(this);
-        };
-
-        Blur.prototype.detached = function detached() {
-          unregister(this);
-        };
-
-        Blur.prototype.contains = function contains(target) {
-          if (!this.value) {
-            return false;
-          }
-          var els = void 0;
-          var el = void 0;
-          var i = void 0,
-              ii = void 0;
-          var j = void 0,
-              jj = void 0;
-          var links = void 0;
-
-          var contextNode = void 0;
-
-          if (this.element.contains(target)) {
-            return true;
-          }
-
-          if (!this.linkedWith) {
-            return false;
-          }
-
-          var linkedWith = this.linkedWith,
-              linkingContext = this.linkingContext;
-
-
-          links = Array.isArray(linkedWith) ? linkedWith : [linkedWith];
-          contextNode = typeof linkingContext === 'string' ? query(linkingContext)[0] : linkingContext;
-          for (i = 0, ii = links.length; i < ii; ++i) {
-            el = links[i];
-
-            if (typeof el === 'string') {
-              if (this.searchSubTree) {
-                els = query(el, contextNode);
-                for (j = 0, jj = els.length; j < jj; ++j) {
-                  if (els[j].contains(target)) {
-                    return true;
-                  }
-                }
-              } else {
-                contextNode = contextNode || document.body;
-                els = contextNode.children;
-                for (j = 0, jj = els.length; j < jj; ++j) {
-                  if (els[j].matches(el)) return true;
-                }
-              }
-            } else {
-              if (el && el.contains(target)) {
-                return true;
-              }
-            }
-          }
-          return false;
-        };
-
-        Blur.prototype.triggerBlur = function triggerBlur() {
-          if (typeof this.onBlur === 'function') {
-            this.onBlur.call(this.context);
-          }
-          this.value = false;
-        };
-
-        return Blur;
-      }(), _class3.inject = [DOM.Element], _class3.listen = {
-        touch: function touch(on) {
-          useTouch = !!on;
-          var fn = on ? addListener : removeListener;
-          fn(document.body, 'touchstart', handleTouchStart, true);
-          return Blur.listen;
-        },
-        mouse: function mouse(on) {
-          useMouse = !!on;
-          var fn = on ? addListener : removeListener;
-          fn(document.body, 'mousedown', handleMousedown, true);
-          return Blur.listen;
-        },
-        pointer: function pointer(on) {
-          usePointer = !!on;
-          var fn = on ? addListener : removeListener;
-          fn(document.body, 'pointerdown', handlePointerDown, true);
-          return Blur.listen;
-        },
-        focus: function focus(on) {
-          useFocus = !!on;
-          var fn = on ? addListener : removeListener;
-          fn(global, 'focus', handleWindowFocus, true);
-          return Blur.listen;
-        },
-        windowBlur: function windowBlur(on) {
-          var fn = on ? addListener : removeListener;
-          fn(global, 'blur', handleWindowBlur);
-          return Blur.listen;
-        }
-      }, _temp), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'value', [_dec2], {
-        enumerable: true,
-        initializer: null
-      }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'onBlur', [bindable], {
-        enumerable: true,
-        initializer: null
-      }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, 'linkedWith', [bindable], {
-        enumerable: true,
-        initializer: null
-      }), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, 'linkedMultiple', [bindable], {
-        enumerable: true,
-        initializer: function initializer() {
-          return true;
-        }
-      }), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'searchSubTree', [bindable], {
-        enumerable: true,
-        initializer: function initializer() {
-          return true;
-        }
-      }), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'linkingContext', [bindable], {
-        enumerable: true,
-        initializer: function initializer() {
-          return null;
-        }
-      })), _class2)) || _class));
-
-      _export('Blur', Blur);
-
-      checkTargets = [];
-      alreadyChecked = false;
-      cleanCheckTimeout = 0;
+        alreadyChecked = true;
+        cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
     }
-  };
+    function handleTouchStart(e) {
+        if (alreadyChecked) {
+            if (!useMouse) {
+                clearTimeout(cleanCheckTimeout);
+                revertAlreadyChecked();
+            }
+            return;
+        }
+        var target = getTargetFromEvent(e);
+        for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
+            var attr = checkTargets[i];
+            if (target === global || !attr.contains(target)) {
+                attr.triggerBlur();
+            }
+        }
+        alreadyChecked = true;
+        cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
+    }
+    function handleMousedown(e) {
+        if (alreadyChecked) {
+            clearTimeout(cleanCheckTimeout);
+            revertAlreadyChecked();
+            return;
+        }
+        var target = getTargetFromEvent(e);
+        for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
+            var attr = checkTargets[i];
+            if (global === target || !attr.contains(target)) {
+                attr.triggerBlur();
+            }
+        }
+        alreadyChecked = true;
+        cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
+    }
+    function handleWindowFocus(e) {
+        if (alreadyChecked) {
+            clearTimeout(cleanCheckTimeout);
+            revertAlreadyChecked();
+            return;
+        }
+        var target = getTargetFromEvent(e);
+        var shouldBlur = target === global;
+        for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
+            var attr = checkTargets[i];
+            if (shouldBlur || !attr.contains(target)) {
+                attr.triggerBlur();
+            }
+        }
+    }
+    function handleWindowBlur() {
+        for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
+            checkTargets[i].triggerBlur();
+        }
+    }
+    function getTargetFromEvent(e) {
+        return e.target;
+    }
+    var aurelia_pal_1, aurelia_templating_1, aurelia_binding_1, global, document, useMouse, Blur, checkTargets, setTimeout, alreadyChecked, cleanCheckTimeout;
+    return {
+        setters: [
+            function (aurelia_pal_1_1) {
+                aurelia_pal_1 = aurelia_pal_1_1;
+            },
+            function (aurelia_templating_1_1) {
+                aurelia_templating_1 = aurelia_templating_1_1;
+            },
+            function (aurelia_binding_1_1) {
+                aurelia_binding_1 = aurelia_binding_1_1;
+            }
+        ],
+        execute: function () {
+            global = aurelia_pal_1.PLATFORM.global;
+            document = global.document;
+            // let useTouch = false;
+            useMouse = false;
+            Blur = /** @class */ (function () {
+                function Blur(element) {
+                    this.element = element;
+                    /**
+                     * Only used when linkedWith is a string.
+                     * Used to determine whether to use querySelector / querySelectorAll to find all interactable elements without triggering blur
+                     * Performace wise Consider using this only when necessary
+                     */
+                    this.linkedMultiple = true;
+                    /**
+                     * Only used when linkedWith is a string, or an array containing some strings
+                     * During query for finding element to link with:
+                     * - true: search all children, using `querySelectorAll`
+                     * - false: search immediate children using for loop
+                     */
+                    this.searchSubTree = true;
+                    /**
+                     * Only used when linkedWith is a string. or an array containing a string
+                     * Determine from which node/ nodes, search for elements
+                     */
+                    this.linkingContext = null;
+                }
+                Blur_1 = Blur;
+                Blur.use = function (cfg) {
+                    for (var i in cfg) {
+                        if (i in this.listen) {
+                            this.listen[i](cfg[i]);
+                        }
+                    }
+                };
+                Blur.prototype.attached = function () {
+                    checkTargets.push(this);
+                };
+                Blur.prototype.detached = function () {
+                    unregister(this);
+                };
+                Blur.prototype.contains = function (target) {
+                    if (!this.value) {
+                        return false;
+                    }
+                    var els;
+                    var el;
+                    var i, ii;
+                    var j, jj;
+                    var links;
+                    var contextNode;
+                    if (this.element.contains(target)) {
+                        return true;
+                    }
+                    if (!this.linkedWith) {
+                        return false;
+                    }
+                    var _a = this, linkedWith = _a.linkedWith, linkingContext = _a.linkingContext;
+                    links = Array.isArray(linkedWith) ? linkedWith : [linkedWith];
+                    contextNode = (typeof linkingContext === 'string' ? document.querySelector(linkingContext) : linkingContext) || document.body;
+                    for (i = 0, ii = links.length; i < ii; ++i) {
+                        el = links[i];
+                        // When user specify to link with something by a string, it acts as a CSS selector
+                        // We need to do some querying stuff to determine if target above is contained.
+                        if (typeof el === 'string') {
+                            // Default behavior, search the whole tree, from context that user specified, which default to document body
+                            // Function `query` used will be similar to `querySelectorAll`, but optimized for performant
+                            if (this.searchSubTree) {
+                                els = contextNode.querySelectorAll(el);
+                                for (j = 0, jj = els.length; j < jj; ++j) {
+                                    if (els[j].contains(target)) {
+                                        return true;
+                                    }
+                                }
+                            }
+                            else {
+                                // default to document body, if user didn't define a linking context, and wanted to ignore subtree.
+                                // This is specifically performant and useful for dialogs, plugins
+                                // that usually generate contents to document body
+                                els = contextNode.children;
+                                for (j = 0, jj = els.length; j < jj; ++j) {
+                                    if (els[j].matches(el)) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            // When user passed in something that is not a string,
+                            // simply check if has method `contains` (allow duck typing)
+                            // and call it against target.
+                            // This enables flexible usages
+                            if (el && el.contains(target)) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                };
+                Blur.prototype.triggerBlur = function () {
+                    if (typeof this.onBlur === 'function') {
+                        this.onBlur.call(null);
+                    }
+                    this.value = false;
+                };
+                Blur.inject = [aurelia_pal_1.DOM.Element];
+                Blur.listen = {
+                    touch: function (on) {
+                        // useTouch = !!on;
+                        var fn = on ? addListener : removeListener;
+                        fn(document, 'touchstart', handleTouchStart, true);
+                        return Blur_1.listen;
+                    },
+                    mouse: function (on) {
+                        useMouse = !!on;
+                        var fn = on ? addListener : removeListener;
+                        fn(document, 'mousedown', handleMousedown, true);
+                        return Blur_1.listen;
+                    },
+                    pointer: function (on) {
+                        // usePointer = !!on;
+                        var fn = on ? addListener : removeListener;
+                        fn(document, 'pointerdown', handlePointerDown, true);
+                        return Blur_1.listen;
+                    },
+                    focus: function (on) {
+                        // useFocus = !!on;
+                        var fn = on ? addListener : removeListener;
+                        fn(global, 'focus', handleWindowFocus, true);
+                        return Blur_1.listen;
+                    },
+                    windowBlur: function (on) {
+                        var fn = on ? addListener : removeListener;
+                        fn(global, 'blur', handleWindowBlur, false);
+                        return Blur_1.listen;
+                    }
+                };
+                __decorate([
+                    aurelia_templating_1.bindable({
+                        primaryProperty: true,
+                        defaultBindingMode: aurelia_binding_1.bindingMode.twoWay
+                    })
+                ], Blur.prototype, "value", void 0);
+                __decorate([
+                    aurelia_templating_1.bindable
+                ], Blur.prototype, "onBlur", void 0);
+                __decorate([
+                    aurelia_templating_1.bindable
+                ], Blur.prototype, "linkedWith", void 0);
+                __decorate([
+                    aurelia_templating_1.bindable
+                ], Blur.prototype, "linkedMultiple", void 0);
+                __decorate([
+                    aurelia_templating_1.bindable
+                ], Blur.prototype, "searchSubTree", void 0);
+                __decorate([
+                    aurelia_templating_1.bindable
+                ], Blur.prototype, "linkingContext", void 0);
+                Blur = Blur_1 = __decorate([
+                    aurelia_templating_1.customAttribute('blur', aurelia_binding_1.bindingMode.twoWay)
+                ], Blur);
+                return Blur;
+                var Blur_1;
+            }());
+            exports_1("Blur", Blur);
+            /*******************************
+             * EVENTS ORDER
+             * -----------------------------
+             * pointerdown
+             * touchstart
+             * pointerup
+             * touchend
+             * mousedown
+             * --------------
+             * BLUR
+             * FOCUS
+             * --------------
+             * mouseup
+             * click
+             ******************************/
+            /**
+             * In which case focus happens without mouse interaction? Keyboard
+             * So it needs to capture both mouse / focus movement
+             */
+            checkTargets = [];
+            setTimeout = global.setTimeout;
+            alreadyChecked = false;
+            cleanCheckTimeout = 0;
+        }
+    };
 });

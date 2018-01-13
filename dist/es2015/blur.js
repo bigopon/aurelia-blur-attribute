@@ -1,318 +1,279 @@
-var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _class3, _temp;
-
-function _initDefineProp(target, property, descriptor, context) {
-  if (!descriptor) return;
-  Object.defineProperty(target, property, {
-    enumerable: descriptor.enumerable,
-    configurable: descriptor.configurable,
-    writable: descriptor.writable,
-    value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-  });
-}
-
-function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-  var desc = {};
-  Object['ke' + 'ys'](descriptor).forEach(function (key) {
-    desc[key] = descriptor[key];
-  });
-  desc.enumerable = !!desc.enumerable;
-  desc.configurable = !!desc.configurable;
-
-  if ('value' in desc || desc.initializer) {
-    desc.writable = true;
-  }
-
-  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-    return decorator(target, property, desc) || desc;
-  }, desc);
-
-  if (context && desc.initializer !== void 0) {
-    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-    desc.initializer = undefined;
-  }
-
-  if (desc.initializer === void 0) {
-    Object['define' + 'Property'](target, property, desc);
-    desc = null;
-  }
-
-  return desc;
-}
-
-function _initializerWarningHelper(descriptor, context) {
-  throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-}
-
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 import { PLATFORM, DOM } from 'aurelia-pal';
 import { customAttribute, bindable } from 'aurelia-templating';
 import { bindingMode } from 'aurelia-binding';
-
-const { global } = PLATFORM;
-
-const { document } = global;
-
-let useTouch = false;
-let useMouse = false;
-let usePointer = false;
-let useFocus = false;
-export let Blur = (_dec = customAttribute('blur', bindingMode.twoWay), _dec2 = bindable({
-  primaryProperty: true,
-  defaultBindingMode: bindingMode.twoWay
-}), _dec(_class = (_class2 = (_temp = _class3 = class Blur {
-
-  static use(cfg) {
-    for (let i in cfg) {
-      if (i in this.listen) {
-        this.listen[i](cfg[i]);
-      }
+var global = PLATFORM.global;
+var document = global.document;
+// let useTouch = false;
+var useMouse = false;
+var Blur = /** @class */ (function () {
+    function Blur(element) {
+        this.element = element;
+        /**
+         * Only used when linkedWith is a string.
+         * Used to determine whether to use querySelector / querySelectorAll to find all interactable elements without triggering blur
+         * Performace wise Consider using this only when necessary
+         */
+        this.linkedMultiple = true;
+        /**
+         * Only used when linkedWith is a string, or an array containing some strings
+         * During query for finding element to link with:
+         * - true: search all children, using `querySelectorAll`
+         * - false: search immediate children using for loop
+         */
+        this.searchSubTree = true;
+        /**
+         * Only used when linkedWith is a string. or an array containing a string
+         * Determine from which node/ nodes, search for elements
+         */
+        this.linkingContext = null;
     }
-  }
-
-  constructor(element) {
-    _initDefineProp(this, 'value', _descriptor, this);
-
-    _initDefineProp(this, 'onBlur', _descriptor2, this);
-
-    _initDefineProp(this, 'linkedWith', _descriptor3, this);
-
-    _initDefineProp(this, 'linkedMultiple', _descriptor4, this);
-
-    _initDefineProp(this, 'searchSubTree', _descriptor5, this);
-
-    _initDefineProp(this, 'linkingContext', _descriptor6, this);
-
-    this.element = element;
-  }
-  bind(bindingContext) {
-    this.context = bindingContext;
-  }
-  attached() {
-    checkTargets.push(this);
-  }
-  detached() {
-    unregister(this);
-  }
-
-  contains(target) {
-    if (!this.value) {
-      return false;
-    }
-    let els;
-    let el;
-    let i, ii;
-    let j, jj;
-    let links;
-
-    let contextNode;
-
-    if (this.element.contains(target)) {
-      return true;
-    }
-
-    if (!this.linkedWith) {
-      return false;
-    }
-
-    const { linkedWith, linkingContext } = this;
-
-    links = Array.isArray(linkedWith) ? linkedWith : [linkedWith];
-    contextNode = typeof linkingContext === 'string' ? query(linkingContext)[0] : linkingContext;
-    for (i = 0, ii = links.length; i < ii; ++i) {
-      el = links[i];
-
-      if (typeof el === 'string') {
-        if (this.searchSubTree) {
-          els = query(el, contextNode);
-          for (j = 0, jj = els.length; j < jj; ++j) {
-            if (els[j].contains(target)) {
-              return true;
+    Blur_1 = Blur;
+    Blur.use = function (cfg) {
+        for (var i in cfg) {
+            if (i in this.listen) {
+                this.listen[i](cfg[i]);
             }
-          }
-        } else {
-          contextNode = contextNode || document.body;
-          els = contextNode.children;
-          for (j = 0, jj = els.length; j < jj; ++j) {
-            if (els[j].matches(el)) return true;
-          }
         }
-      } else {
-        if (el && el.contains(target)) {
-          return true;
+    };
+    Blur.prototype.attached = function () {
+        checkTargets.push(this);
+    };
+    Blur.prototype.detached = function () {
+        unregister(this);
+    };
+    Blur.prototype.contains = function (target) {
+        if (!this.value) {
+            return false;
         }
-      }
-    }
-    return false;
-  }
-
-  triggerBlur() {
-    if (typeof this.onBlur === 'function') {
-      this.onBlur.call(this.context);
-    }
-    this.value = false;
-  }
-}, _class3.inject = [DOM.Element], _class3.listen = {
-  touch(on) {
-    useTouch = !!on;
-    const fn = on ? addListener : removeListener;
-    fn(document.body, 'touchstart', handleTouchStart, true);
-    return Blur.listen;
-  },
-  mouse(on) {
-    useMouse = !!on;
-    const fn = on ? addListener : removeListener;
-    fn(document.body, 'mousedown', handleMousedown, true);
-    return Blur.listen;
-  },
-  pointer(on) {
-    usePointer = !!on;
-    const fn = on ? addListener : removeListener;
-    fn(document.body, 'pointerdown', handlePointerDown, true);
-    return Blur.listen;
-  },
-  focus(on) {
-    useFocus = !!on;
-    const fn = on ? addListener : removeListener;
-    fn(global, 'focus', handleWindowFocus, true);
-    return Blur.listen;
-  },
-  windowBlur(on) {
-    const fn = on ? addListener : removeListener;
-    fn(global, 'blur', handleWindowBlur);
-    return Blur.listen;
-  }
-}, _temp), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'value', [_dec2], {
-  enumerable: true,
-  initializer: null
-}), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'onBlur', [bindable], {
-  enumerable: true,
-  initializer: null
-}), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, 'linkedWith', [bindable], {
-  enumerable: true,
-  initializer: null
-}), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, 'linkedMultiple', [bindable], {
-  enumerable: true,
-  initializer: function () {
-    return true;
-  }
-}), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'searchSubTree', [bindable], {
-  enumerable: true,
-  initializer: function () {
-    return true;
-  }
-}), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'linkingContext', [bindable], {
-  enumerable: true,
-  initializer: function () {
-    return null;
-  }
-})), _class2)) || _class);
-
-function query(selector, context) {
-  context = context || document.body;
-
-  if (/^(#?[\w-]+|\.[\w-.]+)$/.test(selector)) {
-    switch (selector.charAt(0)) {
-      case '#':
-        return [context.getElementById(selector.substr(1))];
-      case '.':
-        let classes = selector.substr(1).replace(/\./g, ' ');
-        return [].slice.call(context.getElementsByClassName(classes));
-      default:
-        return [].slice.call(context.getElementsByTagName(selector));
-    }
-  }
-
-  return [].slice.call(context.querySelectorAll(selector));
-}
-
+        var els;
+        var el;
+        var i, ii;
+        var j, jj;
+        var links;
+        var contextNode;
+        if (this.element.contains(target)) {
+            return true;
+        }
+        if (!this.linkedWith) {
+            return false;
+        }
+        var _a = this, linkedWith = _a.linkedWith, linkingContext = _a.linkingContext;
+        links = Array.isArray(linkedWith) ? linkedWith : [linkedWith];
+        contextNode = (typeof linkingContext === 'string' ? document.querySelector(linkingContext) : linkingContext) || document.body;
+        for (i = 0, ii = links.length; i < ii; ++i) {
+            el = links[i];
+            // When user specify to link with something by a string, it acts as a CSS selector
+            // We need to do some querying stuff to determine if target above is contained.
+            if (typeof el === 'string') {
+                // Default behavior, search the whole tree, from context that user specified, which default to document body
+                // Function `query` used will be similar to `querySelectorAll`, but optimized for performant
+                if (this.searchSubTree) {
+                    els = contextNode.querySelectorAll(el);
+                    for (j = 0, jj = els.length; j < jj; ++j) {
+                        if (els[j].contains(target)) {
+                            return true;
+                        }
+                    }
+                }
+                else {
+                    // default to document body, if user didn't define a linking context, and wanted to ignore subtree.
+                    // This is specifically performant and useful for dialogs, plugins
+                    // that usually generate contents to document body
+                    els = contextNode.children;
+                    for (j = 0, jj = els.length; j < jj; ++j) {
+                        if (els[j].matches(el)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            else {
+                // When user passed in something that is not a string,
+                // simply check if has method `contains` (allow duck typing)
+                // and call it against target.
+                // This enables flexible usages
+                if (el && el.contains(target)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    Blur.prototype.triggerBlur = function () {
+        if (typeof this.onBlur === 'function') {
+            this.onBlur.call(null);
+        }
+        this.value = false;
+    };
+    Blur.inject = [DOM.Element];
+    Blur.listen = {
+        touch: function (on) {
+            // useTouch = !!on;
+            var fn = on ? addListener : removeListener;
+            fn(document, 'touchstart', handleTouchStart, true);
+            return Blur_1.listen;
+        },
+        mouse: function (on) {
+            useMouse = !!on;
+            var fn = on ? addListener : removeListener;
+            fn(document, 'mousedown', handleMousedown, true);
+            return Blur_1.listen;
+        },
+        pointer: function (on) {
+            // usePointer = !!on;
+            var fn = on ? addListener : removeListener;
+            fn(document, 'pointerdown', handlePointerDown, true);
+            return Blur_1.listen;
+        },
+        focus: function (on) {
+            // useFocus = !!on;
+            var fn = on ? addListener : removeListener;
+            fn(global, 'focus', handleWindowFocus, true);
+            return Blur_1.listen;
+        },
+        windowBlur: function (on) {
+            var fn = on ? addListener : removeListener;
+            fn(global, 'blur', handleWindowBlur, false);
+            return Blur_1.listen;
+        }
+    };
+    __decorate([
+        bindable({
+            primaryProperty: true,
+            defaultBindingMode: bindingMode.twoWay
+        })
+    ], Blur.prototype, "value", void 0);
+    __decorate([
+        bindable
+    ], Blur.prototype, "onBlur", void 0);
+    __decorate([
+        bindable
+    ], Blur.prototype, "linkedWith", void 0);
+    __decorate([
+        bindable
+    ], Blur.prototype, "linkedMultiple", void 0);
+    __decorate([
+        bindable
+    ], Blur.prototype, "searchSubTree", void 0);
+    __decorate([
+        bindable
+    ], Blur.prototype, "linkingContext", void 0);
+    Blur = Blur_1 = __decorate([
+        customAttribute('blur', bindingMode.twoWay)
+    ], Blur);
+    return Blur;
+    var Blur_1;
+}());
+export { Blur };
 function addListener(el, ev, listener, capture) {
-  el.addEventListener(ev, listener, capture);
+    el.addEventListener(ev, listener, capture);
 }
 function removeListener(el, ev, listener, capture) {
-  el.removeEventListener(ev, listener, capture);
+    el.removeEventListener(ev, listener, capture);
 }
-
-let checkTargets = [];
+/*******************************
+ * EVENTS ORDER
+ * -----------------------------
+ * pointerdown
+ * touchstart
+ * pointerup
+ * touchend
+ * mousedown
+ * --------------
+ * BLUR
+ * FOCUS
+ * --------------
+ * mouseup
+ * click
+ ******************************/
+/**
+ * In which case focus happens without mouse interaction? Keyboard
+ * So it needs to capture both mouse / focus movement
+ */
+var checkTargets = [];
 function unregister(attr) {
-  let idx = checkTargets.indexOf(attr);
-  if (idx !== -1) checkTargets.splice(idx, 1);
+    var idx = checkTargets.indexOf(attr);
+    if (idx !== -1)
+        checkTargets.splice(idx, 1);
 }
-
-let alreadyChecked = false;
-let cleanCheckTimeout = 0;
+var setTimeout = global.setTimeout;
+var alreadyChecked = false;
+var cleanCheckTimeout = 0;
 function revertAlreadyChecked() {
-  alreadyChecked = false;
-  cleanCheckTimeout = 0;
+    alreadyChecked = false;
+    cleanCheckTimeout = 0;
 }
-
 function handlePointerDown(e) {
-  for (let i = 0, ii = checkTargets.length; i < ii; ++i) {
-    let attr = checkTargets[i];
-    if (!attr.contains(e.target)) {
-      attr.triggerBlur();
+    var target = getTargetFromEvent(e);
+    for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
+        var attr = checkTargets[i];
+        if (global === target || !attr.contains(target)) {
+            attr.triggerBlur();
+        }
     }
-  }
-  alreadyChecked = true;
-  cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
+    alreadyChecked = true;
+    cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
 }
-
 function handleTouchStart(e) {
-  if (alreadyChecked) {
-    if (!useMouse) {
-      clearTimeout(cleanCheckTimeout);
-      revertAlreadyChecked();
+    if (alreadyChecked) {
+        if (!useMouse) {
+            clearTimeout(cleanCheckTimeout);
+            revertAlreadyChecked();
+        }
+        return;
     }
-    return;
-  }
-  let target = getTargetFromEvent(e);
-  for (let i = 0, ii = checkTargets.length; i < ii; ++i) {
-    let attr = checkTargets[i];
-    if (!attr.contains(target)) {
-      attr.triggerBlur();
+    var target = getTargetFromEvent(e);
+    for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
+        var attr = checkTargets[i];
+        if (target === global || !attr.contains(target)) {
+            attr.triggerBlur();
+        }
     }
-  }
-  alreadyChecked = true;
-  cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
+    alreadyChecked = true;
+    cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
 }
-
 function handleMousedown(e) {
-  if (alreadyChecked) {
-    clearTimeout(cleanCheckTimeout);
-    revertAlreadyChecked();
-    return;
-  }
-  let target = getTargetFromEvent(e);
-  for (let i = 0, ii = checkTargets.length; i < ii; ++i) {
-    let attr = checkTargets[i];
-    if (!attr.contains(target)) {
-      attr.triggerBlur();
+    if (alreadyChecked) {
+        clearTimeout(cleanCheckTimeout);
+        revertAlreadyChecked();
+        return;
     }
-  }
-  alreadyChecked = true;
-  cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
+    var target = getTargetFromEvent(e);
+    for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
+        var attr = checkTargets[i];
+        if (global === target || !attr.contains(target)) {
+            attr.triggerBlur();
+        }
+    }
+    alreadyChecked = true;
+    cleanCheckTimeout = setTimeout(revertAlreadyChecked, 50);
 }
-
 function handleWindowFocus(e) {
-  if (alreadyChecked) {
-    clearTimeout(cleanCheckTimeout);
-    revertAlreadyChecked();
-    return;
-  }
-  let target = getTargetFromEvent(e);
-  let shouldBlur = target === window;
-  for (let i = 0, ii = checkTargets.length; i < ii; ++i) {
-    let attr = checkTargets[i];
-    if (shouldBlur || !attr.contains(target)) {
-      attr.triggerBlur();
+    if (alreadyChecked) {
+        clearTimeout(cleanCheckTimeout);
+        revertAlreadyChecked();
+        return;
     }
-  }
+    var target = getTargetFromEvent(e);
+    var shouldBlur = target === global;
+    for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
+        var attr = checkTargets[i];
+        if (shouldBlur || !attr.contains(target)) {
+            attr.triggerBlur();
+        }
+    }
 }
-
 function handleWindowBlur() {
-  for (let i = 0, ii = checkTargets.length; i < ii; ++i) {
-    checkTargets[i].triggerBlur();
-  }
+    for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
+        checkTargets[i].triggerBlur();
+    }
 }
-
 function getTargetFromEvent(e) {
-  return e.target;
+    return e.target;
 }
