@@ -137,3 +137,6 @@ To build the code, follow these steps.
 ```shell
 npm run test
 ```
+
+## Acknowledgement
+Thanks goes to Dwayne Charrington for his Aurelia-TypeScript starter package https://github.com/Vheissu/aurelia-typescript-plugin
