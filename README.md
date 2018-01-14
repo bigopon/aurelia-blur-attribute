@@ -1,8 +1,7 @@
 # aurelia-blur-plugin
 
-[![ZenHub](https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png)](https://zenhub.io)
 [![Join the chat at https://gitter.im/aurelia/discuss](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aurelia/discuss?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
+[![Build Status](https://travis-ci.org/bigopon/aurelia-blur-attribute.svg?branch=master)](https://travis-ci.org/bigopon/aurelia-blur-attribute)
 
 ## [Introduction](aurelia-doc://section/1/version/1.0.0)
 
