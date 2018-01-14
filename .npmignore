@@ -4,3 +4,8 @@ bower_components
 .vscode
 src
 test
+gulpfile.js
+karma.conf.js
+CONTRIBUTING.md
+ISSUE_TEMPLATE.md
+config.js
