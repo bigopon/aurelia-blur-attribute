@@ -59,6 +59,7 @@
     "aurelia-polyfills": "^1.2.2",
     "aurelia-testing": "^1.0.0-beta.4.0.0",
     "concurrently": "^3.5.0",
+    "condition-circle": "^2.0.1",
     "cross-env": "^5.1.1",
     "gulp": "^3.9.1",
     "gulp-sass": "^3.1.0",
@@ -121,5 +122,8 @@
     "directories": {
       "dist": "dist/commonjs"
     }
+  },
+  "release": {
+    "verifyConditions": "condition-circle"
   }
 }
