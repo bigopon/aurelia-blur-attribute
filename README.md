@@ -3,12 +3,12 @@
 [![Join the chat at https://gitter.im/aurelia/discuss](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aurelia/discuss?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/bigopon/aurelia-blur-attribute.svg?branch=master)](https://travis-ci.org/bigopon/aurelia-blur-attribute)
 
-## [Introduction](aurelia-doc://section/1/version/1.0.0)
+## [Introduction]
 
 This article covers the blur plugin for Aurelia. This plugin is created for managing focus in your application. The plugin supports the use of dynamic elements matching, via either element references or CSS selectors. [Online Demo](http://aurelia-blur.bigopon.surge.sh/)
 
 
-## [Installing The Plugin](aurelia-doc://section/2/version/1.0.0)
+## [Installing The Plugin]
 
 1. In your **JSPM**-based project install the plugin via `jspm` with following command
 
@@ -25,7 +25,20 @@ npm install aurelia-blur-plugin --save
 If you use the **Aurelia CLI**, install the plugin with the following command
 
 ```shell
-npm install aurelia-blur-plugin --save
+au import aurelia-blur-attribute
+```
+
+alternatively you can manually add these dependencies to your vendor bundle:
+
+```json
+  ...
+  "dependencies": [
+    {
+      "name": "aurelia-blur-attribute",
+      "path": "../node_modules/aurelia-blur-attribute/dist/amd",
+      "main": "aurelia-blur-attribute"
+    }
+  ]
 ```
 
 2. Make sure you use [manual bootstrapping](http://aurelia.io/docs#startup-and-configuration). In order to do so open your `index.html` and locate the element with the attribute aurelia-app. Change it to look like this:
@@ -45,10 +58,10 @@ npm install aurelia-blur-plugin --save
     let listeningModeOptions = {
       pointer: false, // listen for pointer event interaction
       touch: false, // listen for touch event interaction
-      mouse: false, // listen for mouse event interaction
+      mouse: true, // listen for mouse event interaction
       focus: false, // listen for foucs event
       windowBlur: false // listen for window blur event (navigating away from window)
-    }
+    };
 
     aurelia.use
       .standardConfiguration()
@@ -59,7 +72,7 @@ npm install aurelia-blur-plugin --save
   }
 ```
 
-## [Using The Plugin](aurelia-doc://section/3/version/1.0.0)
+## [Using The Plugin]
 
 There are a few scenarios you can take advantage of the Aurelia blur plugin.
 
