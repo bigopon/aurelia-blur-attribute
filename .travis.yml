@@ -9,7 +9,7 @@ notifications:
 node_js:
 - '8'
 after_success:
-- npm run semantic-release
+- npm run prepare-release
 branches:
   except:
   - "/^v\\d+\\.\\d+\\.\\d+$/"
