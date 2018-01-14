@@ -9,9 +9,9 @@
   ],
   "homepage": "http://aurelia.io",
   "bugs": {
-    "url": "https://github.com/bigopon/aurelia-blur-plugin/issues"
+    "url": "https://github.com/bigopon/aurelia-blur-attribute/issues"
   },
-  "license": "CC0-1.0",
+  "license": "MIT",
   "author": "Binh Vo <bigopon.777@gmail.com> (http://bigopon.surge.sh/)",
   "main": "dist/commonjs/index.js",
   "typings": "dist/commonjs/index.d.ts",
@@ -33,7 +33,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/bigopon/aurelia-blur-plugin"
+    "url": "http://github.com/bigopon/aurelia-blur-attribute"
   },
   "dependencies": {
     "aurelia-binding": "^1.5.0",
