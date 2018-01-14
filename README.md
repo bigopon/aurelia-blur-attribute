@@ -1,4 +1,4 @@
-# aurelia-blur-plugin
+# aurelia-blur-attribute
 
 [![Join the chat at https://gitter.im/aurelia/discuss](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aurelia/discuss?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![CircleCI](https://circleci.com/gh/bigopon/aurelia-blur-attribute.svg?style=svg)](https://circleci.com/gh/bigopon/aurelia-blur-attribute)
@@ -13,13 +13,13 @@ This article covers the blur plugin for Aurelia. This plugin is created for mana
 1. In your **JSPM**-based project install the plugin via `jspm` with following command
 
 ```shell
-jspm install aurelia-blur-plugin
+jspm install aurelia-blur-attribute
 ```
 
 If you use **Webpack**, install the plugin with the following command
 
 ```shell
-npm install aurelia-blur-plugin --save
+npm install aurelia-blur-attribute --save
 ```
 
 If you use the **Aurelia CLI**, install the plugin with the following command
@@ -66,7 +66,7 @@ alternatively you can manually add these dependencies to your vendor bundle:
     aurelia.use
       .standardConfiguration()
       .developmentLogging()
-      .plugin('aurelia-blur-plugin', listeningModeOptions);
+      .plugin('aurelia-blur-attribute', listeningModeOptions);
 
     aurelia.start().then(a => a.setRoot());
   }
