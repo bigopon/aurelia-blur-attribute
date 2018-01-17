@@ -15,8 +15,7 @@ describe('blur', () => {
 
   const checkDelay = 40;
 
-  /**@param {string} name */
-  function h<T extends keyof HTMLElementTagNameMap>(name: T, attrs: Record<string, string | number> = {}, ...children: (string | HTMLElement) []) {
+  function h<T extends keyof HTMLElementTagNameMap>(name: T, attrs: Record<string, string | number> = {}, ...children: (string | HTMLElement | Text | Comment) []) {
     let el = document.createElement<T>(name);
     for (let attr in attrs) {
       el.setAttribute(attr, '' + attrs[attr]);

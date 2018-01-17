@@ -5,5 +5,4 @@ bower_components
 .DS_STORE
 .vscode
 build
-dist
 test/coverage-jest
