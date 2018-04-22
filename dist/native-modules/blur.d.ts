@@ -7,7 +7,7 @@ export interface BlurConfig {
 }
 export declare class Blur {
     private element;
-    static inject: {
+    static inject(): {
         new (): Element;
         prototype: Element;
     }[];

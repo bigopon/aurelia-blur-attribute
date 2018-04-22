@@ -3,13 +3,16 @@ bower_components
 .idea
 .vscode
 .circleci
+.npmignore
+.gitignore
 src
+doc
 test
 gulpfile.js
 karma.conf.js
 config.js
 gulpfile.js
-tsconig.json
+tsconfig.json
 tslint.json
 CONTRIBUTING.md
 ISSUE_TEMPLATE.md

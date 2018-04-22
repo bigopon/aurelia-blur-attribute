@@ -9,8 +9,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var aurelia_pal_1 = require("aurelia-pal");
 var aurelia_templating_1 = require("aurelia-templating");
 var aurelia_binding_1 = require("aurelia-binding");
-var global = aurelia_pal_1.PLATFORM.global;
-var document = global.document;
 // let useTouch = false;
 var useMouse = false;
 var Blur = /** @class */ (function () {
@@ -36,6 +34,9 @@ var Blur = /** @class */ (function () {
         this.linkingContext = null;
     }
     Blur_1 = Blur;
+    Blur.inject = function () {
+        return [aurelia_pal_1.DOM.Element];
+    };
     Blur.use = function (cfg) {
         for (var i in cfg) {
             if (i in this.listen) {
@@ -67,7 +68,7 @@ var Blur = /** @class */ (function () {
         }
         var _a = this, linkedWith = _a.linkedWith, linkingContext = _a.linkingContext;
         links = Array.isArray(linkedWith) ? linkedWith : [linkedWith];
-        contextNode = (typeof linkingContext === 'string' ? document.querySelector(linkingContext) : linkingContext) || document.body;
+        contextNode = (typeof linkingContext === 'string' ? aurelia_pal_1.PLATFORM.global.document.querySelector(linkingContext) : linkingContext) || aurelia_pal_1.PLATFORM.global.document.body;
         for (i = 0, ii = links.length; i < ii; ++i) {
             el = links[i];
             // When user specify to link with something by a string, it acts as a CSS selector
@@ -113,35 +114,34 @@ var Blur = /** @class */ (function () {
         }
         this.value = false;
     };
-    Blur.inject = [aurelia_pal_1.DOM.Element];
     Blur.listen = {
         touch: function (on) {
             // useTouch = !!on;
             var fn = on ? addListener : removeListener;
-            fn(document, 'touchstart', handleTouchStart, true);
+            fn(aurelia_pal_1.PLATFORM.global.document, 'touchstart', handleTouchStart, true);
             return Blur_1.listen;
         },
         mouse: function (on) {
             useMouse = !!on;
             var fn = on ? addListener : removeListener;
-            fn(document, 'mousedown', handleMousedown, true);
+            fn(aurelia_pal_1.PLATFORM.global.document, 'mousedown', handleMousedown, true);
             return Blur_1.listen;
         },
         pointer: function (on) {
             // usePointer = !!on;
             var fn = on ? addListener : removeListener;
-            fn(document, 'pointerdown', handlePointerDown, true);
+            fn(aurelia_pal_1.PLATFORM.global.document, 'pointerdown', handlePointerDown, true);
             return Blur_1.listen;
         },
         focus: function (on) {
             // useFocus = !!on;
             var fn = on ? addListener : removeListener;
-            fn(global, 'focus', handleWindowFocus, true);
+            fn(aurelia_pal_1.PLATFORM.global, 'focus', handleWindowFocus, true);
             return Blur_1.listen;
         },
         windowBlur: function (on) {
             var fn = on ? addListener : removeListener;
-            fn(global, 'blur', handleWindowBlur, false);
+            fn(aurelia_pal_1.PLATFORM.global, 'blur', handleWindowBlur, false);
             return Blur_1.listen;
         }
     };
@@ -204,7 +204,6 @@ function unregister(attr) {
     if (idx !== -1)
         checkTargets.splice(idx, 1);
 }
-var setTimeout = global.setTimeout;
 var alreadyChecked = false;
 var cleanCheckTimeout = 0;
 function revertAlreadyChecked() {
@@ -215,7 +214,7 @@ function handlePointerDown(e) {
     var target = getTargetFromEvent(e);
     for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
         var attr = checkTargets[i];
-        if (global === target || !attr.contains(target)) {
+        if (aurelia_pal_1.PLATFORM.global === target || !attr.contains(target)) {
             attr.triggerBlur();
         }
     }
@@ -224,7 +223,7 @@ function handlePointerDown(e) {
 }
 function handleTouchStart(e) {
     if (alreadyChecked) {
-        if (!useMouse) {
+        if (!useMouse) { // If user listen to mouse even, dont revert, let mousedownHandler do the job
             clearTimeout(cleanCheckTimeout);
             revertAlreadyChecked();
         }
@@ -233,7 +232,7 @@ function handleTouchStart(e) {
     var target = getTargetFromEvent(e);
     for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
         var attr = checkTargets[i];
-        if (target === global || !attr.contains(target)) {
+        if (target === aurelia_pal_1.PLATFORM.global || !attr.contains(target)) {
             attr.triggerBlur();
         }
     }
@@ -249,7 +248,7 @@ function handleMousedown(e) {
     var target = getTargetFromEvent(e);
     for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
         var attr = checkTargets[i];
-        if (global === target || !attr.contains(target)) {
+        if (aurelia_pal_1.PLATFORM.global === target || !attr.contains(target)) {
             attr.triggerBlur();
         }
     }
@@ -263,7 +262,7 @@ function handleWindowFocus(e) {
         return;
     }
     var target = getTargetFromEvent(e);
-    var shouldBlur = target === global;
+    var shouldBlur = target === aurelia_pal_1.PLATFORM.global;
     for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
         var attr = checkTargets[i];
         if (shouldBlur || !attr.contains(target)) {

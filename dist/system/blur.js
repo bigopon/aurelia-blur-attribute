@@ -26,7 +26,7 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
         var target = getTargetFromEvent(e);
         for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
             var attr = checkTargets[i];
-            if (global === target || !attr.contains(target)) {
+            if (aurelia_pal_1.PLATFORM.global === target || !attr.contains(target)) {
                 attr.triggerBlur();
             }
         }
@@ -35,7 +35,7 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
     }
     function handleTouchStart(e) {
         if (alreadyChecked) {
-            if (!useMouse) {
+            if (!useMouse) { // If user listen to mouse even, dont revert, let mousedownHandler do the job
                 clearTimeout(cleanCheckTimeout);
                 revertAlreadyChecked();
             }
@@ -44,7 +44,7 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
         var target = getTargetFromEvent(e);
         for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
             var attr = checkTargets[i];
-            if (target === global || !attr.contains(target)) {
+            if (target === aurelia_pal_1.PLATFORM.global || !attr.contains(target)) {
                 attr.triggerBlur();
             }
         }
@@ -60,7 +60,7 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
         var target = getTargetFromEvent(e);
         for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
             var attr = checkTargets[i];
-            if (global === target || !attr.contains(target)) {
+            if (aurelia_pal_1.PLATFORM.global === target || !attr.contains(target)) {
                 attr.triggerBlur();
             }
         }
@@ -74,7 +74,7 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
             return;
         }
         var target = getTargetFromEvent(e);
-        var shouldBlur = target === global;
+        var shouldBlur = target === aurelia_pal_1.PLATFORM.global;
         for (var i = 0, ii = checkTargets.length; i < ii; ++i) {
             var attr = checkTargets[i];
             if (shouldBlur || !attr.contains(target)) {
@@ -90,7 +90,7 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
     function getTargetFromEvent(e) {
         return e.target;
     }
-    var aurelia_pal_1, aurelia_templating_1, aurelia_binding_1, global, document, useMouse, Blur, checkTargets, setTimeout, alreadyChecked, cleanCheckTimeout;
+    var aurelia_pal_1, aurelia_templating_1, aurelia_binding_1, useMouse, Blur, checkTargets, alreadyChecked, cleanCheckTimeout;
     return {
         setters: [
             function (aurelia_pal_1_1) {
@@ -104,8 +104,6 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
             }
         ],
         execute: function () {
-            global = aurelia_pal_1.PLATFORM.global;
-            document = global.document;
             // let useTouch = false;
             useMouse = false;
             Blur = /** @class */ (function () {
@@ -131,6 +129,9 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
                     this.linkingContext = null;
                 }
                 Blur_1 = Blur;
+                Blur.inject = function () {
+                    return [aurelia_pal_1.DOM.Element];
+                };
                 Blur.use = function (cfg) {
                     for (var i in cfg) {
                         if (i in this.listen) {
@@ -162,7 +163,7 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
                     }
                     var _a = this, linkedWith = _a.linkedWith, linkingContext = _a.linkingContext;
                     links = Array.isArray(linkedWith) ? linkedWith : [linkedWith];
-                    contextNode = (typeof linkingContext === 'string' ? document.querySelector(linkingContext) : linkingContext) || document.body;
+                    contextNode = (typeof linkingContext === 'string' ? aurelia_pal_1.PLATFORM.global.document.querySelector(linkingContext) : linkingContext) || aurelia_pal_1.PLATFORM.global.document.body;
                     for (i = 0, ii = links.length; i < ii; ++i) {
                         el = links[i];
                         // When user specify to link with something by a string, it acts as a CSS selector
@@ -208,35 +209,34 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
                     }
                     this.value = false;
                 };
-                Blur.inject = [aurelia_pal_1.DOM.Element];
                 Blur.listen = {
                     touch: function (on) {
                         // useTouch = !!on;
                         var fn = on ? addListener : removeListener;
-                        fn(document, 'touchstart', handleTouchStart, true);
+                        fn(aurelia_pal_1.PLATFORM.global.document, 'touchstart', handleTouchStart, true);
                         return Blur_1.listen;
                     },
                     mouse: function (on) {
                         useMouse = !!on;
                         var fn = on ? addListener : removeListener;
-                        fn(document, 'mousedown', handleMousedown, true);
+                        fn(aurelia_pal_1.PLATFORM.global.document, 'mousedown', handleMousedown, true);
                         return Blur_1.listen;
                     },
                     pointer: function (on) {
                         // usePointer = !!on;
                         var fn = on ? addListener : removeListener;
-                        fn(document, 'pointerdown', handlePointerDown, true);
+                        fn(aurelia_pal_1.PLATFORM.global.document, 'pointerdown', handlePointerDown, true);
                         return Blur_1.listen;
                     },
                     focus: function (on) {
                         // useFocus = !!on;
                         var fn = on ? addListener : removeListener;
-                        fn(global, 'focus', handleWindowFocus, true);
+                        fn(aurelia_pal_1.PLATFORM.global, 'focus', handleWindowFocus, true);
                         return Blur_1.listen;
                     },
                     windowBlur: function (on) {
                         var fn = on ? addListener : removeListener;
-                        fn(global, 'blur', handleWindowBlur, false);
+                        fn(aurelia_pal_1.PLATFORM.global, 'blur', handleWindowBlur, false);
                         return Blur_1.listen;
                     }
                 };
@@ -288,7 +288,6 @@ System.register(["aurelia-pal", "aurelia-templating", "aurelia-binding"], functi
              * So it needs to capture both mouse / focus movement
              */
             checkTargets = [];
-            setTimeout = global.setTimeout;
             alreadyChecked = false;
             cleanCheckTimeout = 0;
         }

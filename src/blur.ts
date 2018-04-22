@@ -2,9 +2,6 @@ import { PLATFORM, DOM } from 'aurelia-pal';
 import { customAttribute, bindable } from 'aurelia-templating';
 import { bindingMode } from 'aurelia-binding';
 
-const global: Window = PLATFORM.global;
-const document: Document = global.document;
-
 // let useTouch = false;
 let useMouse = false;
 // let usePointer = false;
@@ -21,12 +18,14 @@ export interface BlurConfig {
 @customAttribute('blur', bindingMode.twoWay)
 export class Blur {
 
-  static inject = [DOM.Element]
+  static inject() {
+    return [DOM.Element];
+  }
 
   static use(cfg: BlurConfig) {
     for (let i in cfg) {
       if (i in this.listen) {
-        (this.listen as any) [i]((cfg as any) [i]);
+        (this.listen as any)[i]((cfg as any)[i]);
       }
     }
   }
@@ -35,30 +34,30 @@ export class Blur {
     touch(on: boolean) {
       // useTouch = !!on;
       const fn = on ? addListener : removeListener;
-      fn(document, 'touchstart', handleTouchStart, true);
+      fn(PLATFORM.global.document, 'touchstart', handleTouchStart, true);
       return Blur.listen;
     },
     mouse(on: boolean) {
       useMouse = !!on;
       const fn = on ? addListener : removeListener;
-      fn(document, 'mousedown', handleMousedown, true);
+      fn(PLATFORM.global.document, 'mousedown', handleMousedown, true);
       return Blur.listen;
     },
     pointer(on: boolean) {
       // usePointer = !!on;
       const fn = on ? addListener : removeListener;
-      fn(document, 'pointerdown', handlePointerDown, true);
+      fn(PLATFORM.global.document, 'pointerdown', handlePointerDown, true);
       return Blur.listen;
     },
     focus(on: boolean) {
       // useFocus = !!on;
       const fn = on ? addListener : removeListener;
-      fn(global, 'focus', handleWindowFocus, true);
+      fn(PLATFORM.global, 'focus', handleWindowFocus, true);
       return Blur.listen;
     },
     windowBlur(on: boolean) {
       const fn = on ? addListener : removeListener;
-      fn(global, 'blur', handleWindowBlur, false);
+      fn(PLATFORM.global, 'blur', handleWindowBlur, false);
       return Blur.listen;
     }
   }
@@ -75,7 +74,7 @@ export class Blur {
    * Used to determine which elemens this attribute will be linked with
    * Interacting with a linked element will not trigger blur for this attribute
    */
-  @bindable linkedWith: string | Element | (string | Element) []
+  @bindable linkedWith: string | Element | (string | Element)[]
 
   /**
    * Only used when linkedWith is a string.
@@ -117,7 +116,7 @@ export class Blur {
     let el;
     let i: number, ii: number;
     let j: number, jj: number;
-    let links: string | Element | (string | Element) [];
+    let links: string | Element | (string | Element)[];
     let contextNode: Element | null;
 
     if (this.element.contains(target)) {
@@ -131,7 +130,7 @@ export class Blur {
     const { linkedWith, linkingContext } = this;
 
     links = Array.isArray(linkedWith) ? linkedWith : [linkedWith];
-    contextNode = (typeof linkingContext === 'string' ? document.querySelector(linkingContext) : linkingContext) || document.body;
+    contextNode = (typeof linkingContext === 'string' ? PLATFORM.global.document.querySelector(linkingContext) : linkingContext) || PLATFORM.global.document.body;
     for (i = 0, ii = links.length; i < ii; ++i) {
       el = links[i];
       // When user specify to link with something by a string, it acts as a CSS selector
@@ -140,7 +139,7 @@ export class Blur {
         // Default behavior, search the whole tree, from context that user specified, which default to document body
         // Function `query` used will be similar to `querySelectorAll`, but optimized for performant
         if (this.searchSubTree) {
-          els = contextNode.querySelectorAll(el);
+          els = contextNode!.querySelectorAll(el);
           for (j = 0, jj = els.length; j < jj; ++j) {
             if (els[j].contains(target)) {
               return true;
@@ -150,7 +149,7 @@ export class Blur {
           // default to document body, if user didn't define a linking context, and wanted to ignore subtree.
           // This is specifically performant and useful for dialogs, plugins
           // that usually generate contents to document body
-          els = contextNode.children;
+          els = contextNode!.children;
           for (j = 0, jj = els.length; j < jj; ++j) {
             if (els[j].matches(el)) {
               return true;
@@ -212,9 +211,8 @@ function unregister(attr: Blur) {
   if (idx !== -1) checkTargets.splice(idx, 1);
 }
 
-let setTimeout = global.setTimeout
 let alreadyChecked = false;
-let cleanCheckTimeout = 0;
+let cleanCheckTimeout: any = 0;
 function revertAlreadyChecked() {
   alreadyChecked = false;
   cleanCheckTimeout = 0;
@@ -224,7 +222,7 @@ function handlePointerDown(e: PointerEvent) {
   let target = getTargetFromEvent(e);
   for (let i = 0, ii = checkTargets.length; i < ii; ++i) {
     let attr = checkTargets[i];
-    if (global === target || !attr.contains(target as Element)) {
+    if (PLATFORM.global === target || !attr.contains(target as Element)) {
       attr.triggerBlur();
     }
   }
@@ -243,7 +241,7 @@ function handleTouchStart(e: TouchEvent) {
   let target = getTargetFromEvent(e);
   for (let i = 0, ii = checkTargets.length; i < ii; ++i) {
     let attr = checkTargets[i];
-    if (target === global || !attr.contains(target as Element)) {
+    if (target === PLATFORM.global || !attr.contains(target as Element)) {
       attr.triggerBlur();
     }
   }
@@ -260,7 +258,7 @@ function handleMousedown(e: MouseEvent) {
   let target = getTargetFromEvent(e);
   for (let i = 0, ii = checkTargets.length; i < ii; ++i) {
     let attr = checkTargets[i];
-    if (global === target || !attr.contains(target as Element)) {
+    if (PLATFORM.global === target || !attr.contains(target as Element)) {
       attr.triggerBlur();
     }
   }
@@ -275,7 +273,7 @@ function handleWindowFocus(e: FocusEvent) {
     return;
   }
   let target = getTargetFromEvent(e);
-  let shouldBlur = target === global;
+  let shouldBlur = target === PLATFORM.global;
   for (let i = 0, ii = checkTargets.length; i < ii; ++i) {
     let attr = checkTargets[i];
     if (shouldBlur || !attr.contains(target as Element)) {
