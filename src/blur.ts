@@ -66,22 +66,22 @@ export class Blur {
     primaryProperty: true,
     defaultBindingMode: bindingMode.twoWay
   })
-  value: boolean
+  value: boolean;
 
-  @bindable onBlur: Function
+  @bindable onBlur: Function;
 
   /**
    * Used to determine which elemens this attribute will be linked with
    * Interacting with a linked element will not trigger blur for this attribute
    */
-  @bindable linkedWith: string | Element | (string | Element)[]
+  @bindable linkedWith: string | Element | (string | Element)[];
 
   /**
    * Only used when linkedWith is a string.
    * Used to determine whether to use querySelector / querySelectorAll to find all interactable elements without triggering blur
    * Performace wise Consider using this only when necessary
    */
-  @bindable linkedMultiple = true
+  @bindable linkedMultiple = true;
 
   /**
    * Only used when linkedWith is a string, or an array containing some strings
@@ -89,13 +89,13 @@ export class Blur {
    * - true: search all children, using `querySelectorAll`
    * - false: search immediate children using for loop
    */
-  @bindable searchSubTree = true
+  @bindable searchSubTree = true;
 
   /**
    * Only used when linkedWith is a string. or an array containing a string
    * Determine from which node/ nodes, search for elements
    */
-  @bindable linkingContext: string | Element | null = null
+  @bindable linkingContext: string | Element | null = null;
 
   constructor(private element: Element) {
   }

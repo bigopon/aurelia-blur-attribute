@@ -1,4 +1,4 @@
-import { DOM } from 'aurelia-framework';
+import { DOM } from 'aurelia-pal';
 import { Blur } from '../../src/blur';
 
 describe('blur', () => {
@@ -15,7 +15,7 @@ describe('blur', () => {
 
   const checkDelay = 40;
 
-  function h<T extends keyof HTMLElementTagNameMap>(name: T, attrs: Record<string, string | number> = {}, ...children: (string | HTMLElement | Text | Comment) []) {
+  function h<T extends keyof HTMLElementTagNameMap>(name: T, attrs: Record<string, string | number> = {}, ...children: (string | HTMLElement | Text | Comment)[]) {
     let el = document.createElement<T>(name);
     for (let attr in attrs) {
       el.setAttribute(attr, '' + attrs[attr]);

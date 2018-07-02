@@ -1,4 +1,3 @@
-import { PLATFORM } from 'aurelia-pal'
 import { Blur, BlurConfig } from './blur';
 
 const defaultConfig = {
@@ -10,7 +9,7 @@ const defaultConfig = {
 };
 
 export function configure(frameworkConfig: any, blurConfig: BlurConfig) {
-  frameworkConfig.globalResources(PLATFORM.moduleName('./blur'));
+  frameworkConfig.globalResources(Blur);
   Blur.use(Object.assign({}, defaultConfig, blurConfig));
 }
 

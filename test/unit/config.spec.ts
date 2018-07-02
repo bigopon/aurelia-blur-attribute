@@ -1,5 +1,4 @@
-import { DOM, PLATFORM, FrameworkConfiguration, Aurelia } from 'aurelia-framework';
-import { configure, Blur, BlurConfig } from '../../src/index';
+import { Blur, configure } from '../../src/index';
 
 describe('config', () => {
 
@@ -12,7 +11,7 @@ describe('config', () => {
     let config = {
       focus: true
     };
-    configure(new FrameworkConfiguration({} as any), config);
+    configure({ globalResources() { } }, config);
     expect(Blur.use).toHaveBeenCalled();
   });
 });
