@@ -1,6 +1,6 @@
 {
   "name": "aurelia-blur-attribute",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "A plugin to help manage focus inside an application.",
   "keywords": [
     "aurelia",
